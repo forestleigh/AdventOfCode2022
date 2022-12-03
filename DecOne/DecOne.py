@@ -2,7 +2,7 @@
 with open("/Users/fleigh/Projects/AdventofCode/DecOne/DecOne.txt", "r") as f:
   # reading the data from the file
   file_data = f.read()
-  # splitting the file data into lines
+  # splitting the file data into a list with attention for empty lines
   lines = file_data.splitlines()
 
 def maxCals(list):
