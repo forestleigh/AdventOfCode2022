@@ -131,9 +131,6 @@ def expectedScore2 (list):
         "C" : 3,
     }
 
-    # Use desctructuring to define the code for plays (makes equality possible for draws)
-    [ A, B, C ] = [ "Rock", "Paper", "Scissors" ]
-
     # initilize score varaible
     score = 0
 
