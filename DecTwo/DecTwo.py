@@ -49,25 +49,11 @@ def expectedScore (list):
     if (len(list) % 2 != 0):
         return False
 
-    # Use desctructuring to define the code for plays (makes equality possible for draws)
-    # why didn't this work? It would have made code at the bottom more readable? 
-    [A, X], [B, Y], [C, Z] = ["Rock", "Rock"], ["Paper", "Paper"], ["Scissors", "Scissors"]
-
-    # initilize the rules (key beats value)
-    rules = {
-        "Rock" : "Scissors",
-        "Paper" : "Rock",
-        "Scissors" : "Paper"
-    }
-
     # initilize the scores for plays
     plays = {
-        "A" : 1,
-        "X" : 1,
-        "B" : 2,
-        "Y" : 2,
-        "C" : 3,
-        "Z" : 3
+        "A" : 1, "X" : 1,
+        "B" : 2, "Y" : 2,
+        "C" : 3, "Z" : 3
     }
 
     # initilize score varaible
@@ -82,11 +68,12 @@ def expectedScore (list):
             if plays[el] == plays[list[index + 1]]:
                 score += 3
                 # add points for the play type
-                score += plays[list[index + 1]]
+                score += plays[el]
 
             # now check for wins (+6 points)
             # check if opponent played losing value
-            elif [el, list[index + 1]] == ["A", "Y"] or [el, list[index + 1]] == ["B", "Z"] or [el, list[index + 1]] == ["C", "X"]:
+            # [A, X], [B, Y], [C, Z] = ["Rock", "Rock"], ["Paper", "Paper"], ["Scissors", "Scissors"]
+            elif [list[index + 1], el] == ["Y", "A"] or [list[index + 1], el] == ["Z", "B"] or [list[index + 1], el] == ["X", "C"]:
                 score += 6
                 # add points for the play type
                 score += plays[list[index + 1]]
@@ -115,3 +102,67 @@ Now that you're correctly decrypting the ultra top secret strategy guide, you wo
 Following the Elf's instructions for the second column, what would your total score be if everything goes exactly according to your strategy guide?
 
 """
+
+# opening the file in a way that automatically closes it
+with open("/Users/fleigh/Projects/AdventofCode/DecTwo/DecTwo.txt", "r") as f:
+  # reading the data from the file
+  file_data = f.read()
+  # splitting the file data into a list by new lines and by spaces
+  lines = file_data.split()
+
+#define function that calculates the total score and accepts array as argument
+def expectedScore2 (list):
+
+    # edge case: if array length is odd return false
+    if (len(list) % 2 != 0):
+        return False
+
+    # initilize the rules (key > value)
+    rules = {
+        "A" : "C",
+        "B" : "A",
+        "C" : "B"
+    }
+
+    # initilize the scores for plays
+    plays = {
+        "A" : 1,
+        "B" : 2,
+        "C" : 3,
+    }
+
+    # Use desctructuring to define the code for plays (makes equality possible for draws)
+    [ A, B, C ] = [ "Rock", "Paper", "Scissors" ]
+
+    # initilize score varaible
+    score = 0
+
+    # iterate list every other item starting at index 1
+    for index, el in enumerate(list):
+        # only check the even indexes so that odd indexs = index + 1
+        if index % 2 == 0 and index != len(list) - 1:
+
+            # check for a draw first (+3 points)
+            if list[index + 1] == "Y":
+                score += 3
+                # add points for the play type
+                score += plays[el]
+
+            # now check for losses (+0 points)
+            elif list[index + 1] == "X":
+                # check find the losing value (look up value by key in rules)
+                v = rules[el]
+                # add points for the play type
+                score += plays[v]
+
+            # now check for wins (X) (+6 points)
+            else:
+                score += 6
+                # check find the winning value (look up key by value in rules)
+                v = [k for k, m in rules.items() if m == el]
+                # add points for the play type
+                score += plays[v[0]]
+
+    return score
+
+print(expectedScore2(lines))
