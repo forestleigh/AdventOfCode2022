@@ -36,6 +36,7 @@ What would your total score be if everything goes exactly according to your stra
 
 """
 
+
 def expected_RPS_score(path_to_data):
     """Calculates the expected score for multiple rounds of rock paper scissors
     We know the plays of the enemy player and current player and need to calcualte the outcomes
@@ -110,6 +111,7 @@ Following the Elf's instructions for the second column, what would your total sc
 
 """
 # define function that calculates the total score and accepts a path (str) as argumen
+
 
 def expected_RPS_score2(path_to_data):
     """Calculates the expected score for multiple rounds of rock paper scissors
