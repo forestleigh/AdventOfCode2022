@@ -38,8 +38,8 @@ To begin, get your puzzle input.
 --- Part One ---
 
 """
-#solution below is )(n) in time complexity and space complexity
-#if I had not tracked the elf ids it could have had better space compleity
+# solution below is )(n) in time complexity and space complexity
+# if I had not tracked the elf ids it could have had better space compleity
 
 # opening the file in a way that automatically closes it
 with open("/Users/fleigh/Projects/AdventofCode/DecOne/DecOne.txt", "r") as f:
@@ -48,12 +48,14 @@ with open("/Users/fleigh/Projects/AdventofCode/DecOne/DecOne.txt", "r") as f:
   # splitting the file data into a list with inclusion of empty lines
   cals_list_by_elf = file_data.splitlines()
 
-# we will keep track of both the cals and which elves have the cals 
+# we will keep track of both the cals and which elves have the cals
+
+
 def maxCals(cals_list):
     # initialize elf counter and cache
     curr_elf_id = 1
     elf_dict = {}
-    max_cals= 0
+    max_cals = 0
 
     # iterate through the list
     for i in cals_list:
@@ -72,6 +74,7 @@ def maxCals(cals_list):
     # return the elf id and calorie amount
     return (elf_with_max_cals, max_cals)
 
+
 # call function and print to terminal
 print(maxCals(cals_list_by_elf))
 
@@ -86,8 +89,8 @@ In the example above, the top three Elves are the fourth Elf (with 24000 Calorie
 Find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?
 
 """
-#this solution in O(nlogn) in time compleity due to the addition of sorting 
-#still order n space complexity 
+# this solution in O(nlogn) in time compleity due to the addition of sorting
+# still order n space complexity
 
 # opening the file in a way that automatically closes it
 with open("/Users/fleigh/Projects/AdventofCode/DecOne/DecOne.txt", "r") as f:
@@ -96,7 +99,9 @@ with open("/Users/fleigh/Projects/AdventofCode/DecOne/DecOne.txt", "r") as f:
   # splitting the file data into a list with inclusion of empty lines
   cals_list_by_elf = file_data.splitlines()
 
-# we will keep track of both the cals and which elves have the cals 
+# we will keep track of both the cals and which elves have the cals
+
+
 def maxCals2(cals_list):
     # initialize elf counter and cache
     curr_elf_id = 1
@@ -125,6 +130,7 @@ def maxCals2(cals_list):
 
     # return the top 3 elves and the sum of their cals
     return top_three_elves, sum_cals_top_three
+
 
 # call function and print to terminal
 print(maxCals2(cals_list_by_elf))

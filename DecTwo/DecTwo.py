@@ -35,51 +35,64 @@ In this example, if you were to follow the strategy guide, you would get a total
 What would your total score be if everything goes exactly according to your strategy guide?
 
 """
-#define function that calculates the total score and accepts a path (str) as argument
-def expectedScore (path_to_data):
+
+def expected_RPS_score(path_to_data):
+    """Calculates the expected score for multiple rounds of rock paper scissors
+    We know the plays of the enemy player and current player and need to calcualte the outcomes
+
+    Args:
+        path_to_data : str of path to a loal text file
+
+    Returns:
+        int: total score for current player against enemy player
+    """
 
     # re-lable the variables for readability
-    plays = {
-        "A" : "Rock",
-        "B" : "Paper",
-        "C" : "Scissors",
-        "X" : "Rock",
-        "Y" : "Paper",
-        "Z" : "Scissors"
+    secret_code = {
+        "A": "Rock",
+        "B": "Paper",
+        "C": "Scissors",
+        "X": "Rock",
+        "Y": "Paper",
+        "Z": "Scissors"
     }
 
-    # define game outcomes 
+    # define game outcomes
     outcomes = {
-        ("Rock", "Rock") : "draw",
-        ("Rock", "Paper") : "win",
-        ("Rock", "Scissors") : "lose",
-        ("Paper", "Rock") : "lose",
-        ("Paper", "Paper") : "draw",
-        ("Paper", "Scissors") : "win",
-        ("Scissors", "Rock") : "win",
-        ("Scissors", "Paper") : "lose",
-        ("Scissors", "Scissors") : "draw",
+        ("Rock", "Rock"): "draw",
+        ("Rock", "Paper"): "win",
+        ("Rock", "Scissors"): "lose",
+        ("Paper", "Rock"): "lose",
+        ("Paper", "Paper"): "draw",
+        ("Paper", "Scissors"): "win",
+        ("Scissors", "Rock"): "win",
+        ("Scissors", "Paper"): "lose",
+        ("Scissors", "Scissors"): "draw",
     }
 
     # make tables for scoring points
-    score_outcomes = { "lose": 0, "win": 6, "draw" : 3 }
-    score_plays = { "Rock": 1, "Paper": 2, "Scissors" : 3 }
+    score_outcomes = {"lose": 0, "win": 6, "draw": 3}
+    score_plays = {"Rock": 1, "Paper": 2, "Scissors": 3}
 
     # initilize score varaible
     score = 0
 
-    # opening the file in a way that automatically closes it
+    # open the file in a way that automatically closes it
     with open(path_to_data, "r") as f:
-        # reading the data from the file
+        # reading the data from the file one line at a time
         for line in f:
-            enemy_play = plays[line[0]]
-            curr_play = plays[line[2]]
+            # translate the enemy and current plays to Rock/paper/scisscors
+            enemy_play = secret_code[line[0]]
+            curr_play = secret_code[line[2]]
+            # look up the outcome of each game in the outcomes dict
             curr_outcome = outcomes[(enemy_play, curr_play)]
+            # increase the score by the points from outscomes and plays
             score += score_outcomes[curr_outcome] + score_plays[curr_play]
 
     return score
 
-print(expectedScore("/Users/fleigh/Projects/AdventofCode/DecTwo/DecTwo.txt"))
+
+print(expected_RPS_score("/Users/fleigh/Projects/AdventofCode/DecTwo/DecTwo.txt"))
 
 
 """
@@ -96,64 +109,62 @@ Now that you're correctly decrypting the ultra top secret strategy guide, you wo
 Following the Elf's instructions for the second column, what would your total score be if everything goes exactly according to your strategy guide?
 
 """
+# define function that calculates the total score and accepts a path (str) as argumen
 
-# opening the file in a way that automatically closes it
-with open("/Users/fleigh/Projects/AdventofCode/DecTwo/DecTwo.txt", "r") as f:
-  # reading the data from the file
-  file_data = f.read()
-  # splitting the file data into a list by new lines and by spaces
-  lines = file_data.split()
+def expected_RPS_score2(path_to_data):
+    """Calculates the expected score for multiple rounds of rock paper scissors
+    We know the plays of the enemy player and the outcome of each game and need to cacluate the curent player's plays
 
-#define function that calculates the total score and accepts array as argument
-def expectedScore2 (list):
+    Args:
+        path_to_data : str of path to a loal text file
 
-    # edge case: if array length is odd return false
-    if (len(list) % 2 != 0):
-        return False
+    Returns:
+        int: total score for current player against enemy player
+    """
 
-    # initilize the rules (key > value)
-    rules = {
-        "A" : "C",
-        "B" : "A",
-        "C" : "B"
+    # re-lable the variables for readability
+    secret_code = {
+        "A": "Rock",
+        "B": "Paper",
+        "C": "Scissors",
+        "X": "lose",
+        "Y": "draw",
+        "Z": "win"
     }
 
-    # initilize the scores for plays
-    plays = {
-        "A" : 1,
-        "B" : 2,
-        "C" : 3,
+    # define game outcomes
+    outcomes = {
+        ("Rock", "draw"): "Rock",
+        ("Rock", "win"): "Paper",
+        ("Rock", "lose"): "Scissors",
+        ("Paper", "lose"): "Rock",
+        ("Paper", "draw"): "Paper",
+        ("Paper", "win"): "Scissors",
+        ("Scissors", "win"): "Rock",
+        ("Scissors", "lose"): "Paper",
+        ("Scissors", "draw"): "Scissors",
     }
+
+    # make tables for scoring points
+    score_outcomes = {"lose": 0, "win": 6, "draw": 3}
+    score_plays = {"Rock": 1, "Paper": 2, "Scissors": 3}
 
     # initilize score varaible
     score = 0
 
-    # iterate list every other item starting at index 1
-    for index, el in enumerate(list):
-        # only check the even indexes so that odd indexs = index + 1
-        if index % 2 == 0 and index != len(list) - 1:
-
-            # check for a draw first (+3 points)
-            if list[index + 1] == "Y":
-                score += 3
-                # add points for the play type
-                score += plays[el]
-
-            # now check for losses (+0 points)
-            elif list[index + 1] == "X":
-                # check find the losing value (look up value by key in rules)
-                v = rules[el]
-                # add points for the play type
-                score += plays[v]
-
-            # now check for wins (X) (+6 points)
-            else:
-                score += 6
-                # check find the winning value (look up key by value in rules)
-                v = [k for k, m in rules.items() if m == el]
-                # add points for the play type
-                score += plays[v[0]]
+    # opening the file in a way that automatically closes it
+    with open(path_to_data, "r") as f:
+        # reading the data from the file one line at a time
+        for line in f:
+            # translate the enemy play and the outcome for each game into common english
+            enemy_play = secret_code[line[0]]
+            curr_outcome = secret_code[line[2]]
+            # look up the current player's play in the outcomes dict
+            curr_play = outcomes[(enemy_play, curr_outcome)]
+            # increase the score by the points from outscomes and plays
+            score += score_outcomes[curr_outcome] + score_plays[curr_play]
 
     return score
 
-print(expectedScore2(lines))
+
+print(expected_RPS_score2("/Users/fleigh/Projects/AdventofCode/DecTwo/DecTwo.txt"))
