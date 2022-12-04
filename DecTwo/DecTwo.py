@@ -35,57 +35,51 @@ In this example, if you were to follow the strategy guide, you would get a total
 What would your total score be if everything goes exactly according to your strategy guide?
 
 """
-# opening the file in a way that automatically closes it
-with open("/Users/fleigh/Projects/AdventofCode/DecTwo/DecTwo.txt", "r") as f:
-  # reading the data from the file
-  file_data = f.read()
-  # splitting the file data into a list by new lines and by spaces
-  lines = file_data.split()
+#define function that calculates the total score and accepts a path (str) as argument
+def expectedScore (path_to_data):
 
-#define function that calculates the total score and accepts array as argument
-def expectedScore (list):
-
-    # edge case: if array length is odd return false
-    if (len(list) % 2 != 0):
-        return False
-
-    # initilize the scores for plays
+    # re-lable the variables for readability
     plays = {
-        "A" : 1, "X" : 1,
-        "B" : 2, "Y" : 2,
-        "C" : 3, "Z" : 3
+        "A" : "Rock",
+        "B" : "Paper",
+        "C" : "Scissors",
+        "X" : "Rock",
+        "Y" : "Paper",
+        "Z" : "Scissors"
     }
+
+    # define game outcomes 
+    outcomes = {
+        ("Rock", "Rock") : "draw",
+        ("Rock", "Paper") : "win",
+        ("Rock", "Scissors") : "lose",
+        ("Paper", "Rock") : "lose",
+        ("Paper", "Paper") : "draw",
+        ("Paper", "Scissors") : "win",
+        ("Scissors", "Rock") : "win",
+        ("Scissors", "Paper") : "lose",
+        ("Scissors", "Scissors") : "draw",
+    }
+
+    # make tables for scoring points
+    score_outcomes = { "lose": 0, "win": 6, "draw" : 3 }
+    score_plays = { "Rock": 1, "Paper": 2, "Scissors" : 3 }
 
     # initilize score varaible
     score = 0
 
-    # iterate list every other item starting at index 1
-    for index, el in enumerate(list):
-        # only check the even indexes so that odd indexs = index + 1
-        if index % 2 == 0 and index != len(list) - 1:
-
-            # check for a draw first (+3 points)
-            if plays[el] == plays[list[index + 1]]:
-                score += 3
-                # add points for the play type
-                score += plays[el]
-
-            # now check for wins (+6 points)
-            # check if opponent played losing value
-            # [A, X], [B, Y], [C, Z] = ["Rock", "Rock"], ["Paper", "Paper"], ["Scissors", "Scissors"]
-            elif [list[index + 1], el] == ["Y", "A"] or [list[index + 1], el] == ["Z", "B"] or [list[index + 1], el] == ["X", "C"]:
-                score += 6
-                # add points for the play type
-                score += plays[list[index + 1]]
-
-            # now check for losses (+0 points)
-            else:
-                # add points for the play type
-                score += plays[list[index + 1]]
+    # opening the file in a way that automatically closes it
+    with open(path_to_data, "r") as f:
+        # reading the data from the file
+        for line in f:
+            enemy_play = plays[line[0]]
+            curr_play = plays[line[2]]
+            curr_outcome = outcomes[(enemy_play, curr_play)]
+            score += score_outcomes[curr_outcome] + score_plays[curr_play]
 
     return score
 
-print(expectedScore(lines))
+print(expectedScore("/Users/fleigh/Projects/AdventofCode/DecTwo/DecTwo.txt"))
 
 
 """
