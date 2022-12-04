@@ -143,47 +143,51 @@ def rucksack_reorg(path_to_data):
     # {'A': 27, 'B': 28, 'C': 29, 'D': 30, 'E': 31, 'F': 32...
 
     # initiate the cumulative list of shared items and priorities total
-    shared_items = []
-    priorities_of_shared_total = 0
+    shared_badges = []
+    priorities_total_for_all_badges = 0
+    current_trio_of_elves = []
 
     # read datafile line by line
     with open(path_to_data, "r") as f:
         for line in f:
-            # initilize current shared items
-            current_shared_items = {}
+            #if current_trio is less than 3, add the line to the list
+            if len(current_trio_of_elves) < 3:
+                # remove duplicates as strings are added to trio sets 
+                current_trio_of_elves.append(set(line))
 
-            # the length of string is always even so can split with simple indexing
-            first_half = line[0: len(line)//2]
-            second_half = line[len(line)//2: len(line)]
+            # if curent_trio is 3, clear the list and add this line to the 0 index
+            if (len(current_trio_of_elves)) == 3:
 
-            # create hash map for first_half
-            first_half_map = {}
-            for char in first_half:
-                first_half_map[char] = char
+                # find item shared by all 3 strings of items in current trio
+                # Calculates intersection of sets at index 0 and 1
+                set_temp = current_trio_of_elves[0].intersection(current_trio_of_elves[1])
+                
+                # Calculates intersection of sets at set_temp and 3
+                result_set = set_temp.intersection(current_trio_of_elves[2])
+                
+                # Converts resulting set to list
+                curr_badge_list = list(result_set)
+                # print(curr_badge_list)
 
-            # itterate through second half and look for values in the map
-            for char in second_half:
-                # if the item is in the first list
-                if first_half_map.get(char, False):
-                    # add to current shared items for this rucksack
-                    current_shared_items[char] = char
+                # add curent badge list to shared badge list
+                shared_badges += set(curr_badge_list)
 
-            # add the item to our shared items list
-            shared_items += current_shared_items
+                # return the list to empty to find the next trio befroe next itteration 
+                current_trio_of_elves = []
 
         # finnaly, calcualte the priorities
-        for item in shared_items:
+        for item in shared_badges:
             if item.islower():
                 # if its lowercase, get priotrity from that hash map
                 # add priotrity to the accumulaating total
-                priorities_of_shared_total += priorities_map_lower[item]
+                priorities_total_for_all_badges += priorities_map_lower[item]
             if item.isupper():
                 # if it is uppercase get the priotrty from the other hash map
                 # add prioritiy to the accumualting total
-                priorities_of_shared_total += priorities_map_upper[item]
+                priorities_total_for_all_badges += priorities_map_upper[item]
 
     # return the sum of all priotiries of the items shared by compartments in single ruckshacks
-    return priorities_of_shared_total
+    return priorities_total_for_all_badges
 
 
 print(rucksack_reorg("/Users/fleigh/Projects/AdventofCode/DecThree/DecThree.txt"))
