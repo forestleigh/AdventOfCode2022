@@ -153,7 +153,8 @@ def rucksack_reorg(path_to_data):
             #if current_trio is less than 3, add the line to the list
             if len(current_trio_of_elves) < 3:
                 # remove duplicates as strings are added to trio sets 
-                current_trio_of_elves.append(set(line))
+                # need to use strip to remove trailing spaces
+                current_trio_of_elves.append(set(line.strip()))
 
             # if curent_trio is 3, clear the list and add this line to the 0 index
             if (len(current_trio_of_elves)) == 3:
