@@ -53,6 +53,7 @@ After the rearrangement procedure completes, what crate ends up on top of each s
 """
 from collections import OrderedDict
 
+
 def supply_stacks_arrange(path_to_instructions, path_to_map):
     """this function identifies which boxes will be at the top of each stack after a predefined rearrangement
 
@@ -64,7 +65,7 @@ def supply_stacks_arrange(path_to_instructions, path_to_map):
         top_boxes (str): a string with the simple letter names of each box on top of one of the stacks
     """
 
-    #initilize the stack dictionary
+    # initilize the stack dictionary
     stacks_made = {}
 
     # read datafile line by line
@@ -72,14 +73,15 @@ def supply_stacks_arrange(path_to_instructions, path_to_map):
         for line in f:
 
             # first we parse the containers
-            #initilize stack count 
+            # initilize stack count
             stack_id = 1
             # lets add this into a dictionary with key's being stack number and values being a list with the container ids
-            for element in line[1::4]: # looping to every 4th index to ignore unimportant empty strings
+            # looping to every 4th index to ignore unimportant empty strings
+            for element in line[1::4]:
                 if element.isalpha():
                     if stacks_made.get(stack_id, False):
-                        #if the stack id exists, append the element to the list
-                        # need to use the insert method to push to the front of the list as we read down the file
+                        # if the stack id exists, append the element to the list
+                        # need to use the insert method to add to the front of the list as we read down the file
                         stacks_made[stack_id].insert(0, element)
                     else:
                         # add the stack id and pair it with a new list containting the element
@@ -99,6 +101,8 @@ def supply_stacks_arrange(path_to_instructions, path_to_map):
             # get digits from the string
             # ex: [5, 3, 4]
             digit_list = [int(x) for x in next_step if x.isnumeric()]
+
+            # now to follow the instructions
             # repeat action for this many containers
             for i in range(digit_list[0]):
                 # pop off container from list at digit_list[1]
@@ -116,7 +120,9 @@ def supply_stacks_arrange(path_to_instructions, path_to_map):
 
     return top_boxes
 
-print(supply_stacks_arrange("/Users/fleigh/Projects/AdventofCode/DecFifth/Instructions.txt", "/Users/fleigh/Projects/AdventofCode/DecFifth/Map.txt"))
+
+print(supply_stacks_arrange("/Users/fleigh/Projects/AdventofCode/DecFifth/Instructions.txt",
+      "/Users/fleigh/Projects/AdventofCode/DecFifth/Map.txt"))
 
 """
 --- Part Two ---
@@ -164,3 +170,78 @@ In this example, the CrateMover 9001 has put the crates in a totally different o
 Before the rearrangement process finishes, update your simulation so that the Elves know where they should stand to be ready to unload the final supplies. After the rearrangement procedure completes, what crate ends up on top of each stack?
 
 """
+
+
+def supply_stacks_arrange(path_to_instructions, path_to_map):
+    """this function identifies which boxes will be at the top of each stack after a predefined rearrangement
+
+    Args:
+        path_to_map (str): describes path to text file with data describing the initital state of the containers
+        path_to_instructions (str): describes path to text file with data describing in what ways to manupulate the containers
+
+    Returns: 
+        top_boxes (str): a string with the simple letter names of each box on top of one of the stacks
+    """
+
+    # initilize the stack dictionary
+    stacks_made = {}
+
+    # read datafile line by line
+    with open(path_to_map, "r") as f:
+        for line in f:
+
+            # first we parse the containers
+            # initilize stack count
+            stack_id = 1
+            # lets add this into a dictionary with key's being stack number and values being a list with the container ids
+            # looping to every 4th index to ignore unimportant empty strings
+            for element in line[1::4]:
+                if element.isalpha():
+                    if stacks_made.get(stack_id, False):
+                        # if the stack id exists, append the element to the list
+                        # need to use the insert method to add to the front of the list as we read down the file
+                        stacks_made[stack_id].insert(0, element)
+                    else:
+                        # add the stack id and pair it with a new list containting the element
+                        stacks_made[stack_id] = list(element)
+                # increae stack id with each call
+                stack_id += 1
+
+    # need to order dictionary
+    ordered_stacks_made = OrderedDict(sorted(stacks_made.items()))
+
+    # now that we have a fully fledged dictionary we can handle the instructions
+    # read datafile line by line
+    with open(path_to_instructions, "r") as f:
+        for line in f:
+            # ex: ['move', '5', 'from', '3', 'to', '4']
+            next_step = line.split()
+            # get digits from the string
+            # ex: [5, 3, 4]
+            digit_list = [int(x) for x in next_step if x.isnumeric()]
+
+            # now to follow the instructions
+            #initilize a temporary stack
+            temp_list = []
+            # repeat action for this many containers
+            for i in range(digit_list[0]):
+                # pop off container from list at digit_list[1]
+                temp = ordered_stacks_made[digit_list[1]].pop()
+                # push to temporary stack
+                temp_list.insert(0, temp)
+            # push on container from list at digit_list[2]
+            ordered_stacks_made[digit_list[2]] += temp_list
+
+    # now identify the containers at the top of every stack
+    # initlizae the return stirng
+    top_boxes = ''
+    # itterate through the stacks collecting the top box of each
+    for k in ordered_stacks_made:
+        temp = ordered_stacks_made[k].pop()
+        top_boxes += temp
+
+    return top_boxes
+
+
+print(supply_stacks_arrange("/Users/fleigh/Projects/AdventofCode/DecFifth/Instructions.txt",
+      "/Users/fleigh/Projects/AdventofCode/DecFifth/Map.txt"))
