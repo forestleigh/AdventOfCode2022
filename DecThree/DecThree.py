@@ -34,53 +34,34 @@ from string import ascii_letters
 priorities_map = {v: k for k, v in enumerate(ascii_letters, 1)}
 # {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6...
 
-def rucksack_reorg(path_to_data):
-    """this function identifies the items that are in both compartments of a rucksack and adds their respective priorties
+def rucksack_reorg(sack: str):
+    """this function identifies the common char to two halves of an input string
     Args:
-        path_to_data (str): describes path to text file with data
+        sack (str): a string of random letters where capitalization matters
     Returns: 
-        sum_of_priorities (int): the sum of priorties for each item type that appears in both compartments of each rucksack
+        sum_of_priorities (int): each common item has a prioritiy score associated with it, this is their sum
     """
+    # initialize priority score
+    priority = 0
 
-    # initiate the cumulative list of shared items and priorities total
-    shared_items = []
-    priorities_of_shared_total = 0
+    # split pack into two equal pockets
+    pocket_size = int(len(sack) / 2)
+    inventory_1 = set(sack[:pocket_size])
+    inventroy_2 = set(sack[pocket_size:])
 
-    # read datafile line by line
-    with open(path_to_data, "r") as f:
-        for line in f:
-            # initilize current shared items
-            current_shared_items = {}
+    # find the intersection of the two sack halves
+    common_item = list(inventory_1.intersection(inventroy_2))[0]
+    priority += priorities_map[common_item[0]]
 
-            # the length of string is always even so can split with simple indexing
-            first_half = line[0: len(line)//2]
-            second_half = line[len(line)//2: len(line)]
+    return priority
 
-            # create hash map for first_half
-            first_half_map = {}
-            for char in first_half:
-                first_half_map[char] = char
+# read datafile line by line
+with open("/Users/fleigh/Projects/AdventofCode/DecThree/DecThree.txt") as f:
+    priorities_total = 0
+    for line in f:
+        priorities_total += rucksack_reorg(line)
+print(priorities_total)
 
-            # itterate through second half and look for values in the map
-            for char in second_half:
-                # if the item is in the first list
-                if first_half_map.get(char, False):
-                    # add to current shared items for this rucksack
-                    current_shared_items[char] = char
-
-            # add the item to our shared items list
-            shared_items += current_shared_items
-
-        # finnaly, calcualte the priorities
-        for item in shared_items:
-                # add priotrity to the accumulaating total
-                priorities_of_shared_total += priorities_map[item]
-
-    # return the sum of all priotiries of the items shared by compartments in single ruckshacks
-    return priorities_of_shared_total
-
-
-print(rucksack_reorg("/Users/fleigh/Projects/AdventofCode/DecThree/DecThree.txt"))
 
 """
     --- Part Two ---
@@ -107,37 +88,33 @@ Find the item type that corresponds to the badges of each three-Elf group. What 
 
 """
 
-
-def rucksack_reorg_by_three(path_to_data):
-    """this function identifies the items that are in both compartments of a rucksack and adds their respective priorties
+def rucksack_reorg_by_three(list_of_items):
+    """this function identifies the common item in each consecutive set of 3 strings
     Args:
-        path_to_data (str): describes path to text file with data
+        list_of_items (list): a list of strings where each consecultive set of 3 strings has once common char
     Returns: 
-        sum_of_priorities (int): the sum of priorties for each item type that appears in both compartments of each rucksack
+        sum_of_priorities (int): each common item has a priotriy value associated with it, this is the sum of all priority values 
     """
 
-    # initilize the accumulator
+    # initialize priority score
     priorities_total = 0
 
-    # read datafile line by line
-    with open(path_to_data, "r") as f:
-        lines = f.read().splitlines()
+    #iterate over groups of 3 lines
+    for i in range(0, len(list_of_items), 3):
+        # make each sack into a set to remove duplicates
+        elf1 = set(list_of_items[i + 0])
+        elf2 = set(list_of_items[i + 1])
+        elf3 = set(list_of_items[i + 2])
+        # find the intersection of the 3 elf's sacks
+        common_el = elf1.intersection(elf2).intersection(elf3)
+        badge_id = list(common_el)[0]
+        # add the priortiy score to total
+        priorities_total += priorities_map[badge_id]
+    return priorities_total
 
-        #iterate over groups of 3 lines
-        for i in range(0, len(lines), 3):
-            # make each sack into a set to remove duplicates
-            elf1 = set(lines[i + 0])
-            elf2 = set(lines[i + 1])
-            elf3 = set(lines[i + 2])
+# read datafile as a list
+with open("/Users/fleigh/Projects/AdventofCode/DecThree/DecThree.txt") as f:
+    lines = f.read().splitlines()
+    priorities_sum = rucksack_reorg_by_three(lines)
 
-            # find the intersection of the 3 elf's sacks
-            common_el = elf1.intersection(elf2).intersection(elf3)
-            badge_id = list(common_el)[0]
-
-            # add the priortiy score to total
-            priorities_total += priorities_map[badge_id]
-
-        return priorities_total
-
-
-print(rucksack_reorg_by_three("/Users/fleigh/Projects/AdventofCode/DecThree/DecThree.txt"))
+print(priorities_sum)
