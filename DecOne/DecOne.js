@@ -42,7 +42,7 @@ To begin, get your puzzle input.
 // import Node's file reader
 const fs = require("fs");
 // read contents of the file
-const data = fs.readFileSync("./DecOne.txt", "UTF-8");
+const data = fs.readFileSync("./Data.txt", "UTF-8");
 
 // split the contents by new line into array of substrings
 // A carriage return (\r) + newline (\n) is best practice

@@ -82,7 +82,7 @@ def expected_RPS_score(gameplay: str):
 
 sum_scores_code_1 = 0
 # open the file in a way that automatically closes it
-with open("/Users/fleigh/Projects/AdventofCode/DecTwo/DecTwo.txt") as f:
+with open("/Users/fleigh/Projects/AdventofCode/DecTwo/Data.txt") as f:
     # reading the data from the file one line at a time
     for line in f:
         sum_scores_code_1 += expected_RPS_score(line)
@@ -146,7 +146,7 @@ def expected_RPS_score_2(gameplay: str):
 
 sum_scores_code_2 = 0
 # opening the file in a way that automatically closes it
-with open("/Users/fleigh/Projects/AdventofCode/DecTwo/DecTwo.txt") as f:
+with open("/Users/fleigh/Projects/AdventofCode/DecTwo/Data.txt") as f:
     # reading the data from the file one line at a time
     for line in f:
         sum_scores_code_2 += expected_RPS_score_2(line)

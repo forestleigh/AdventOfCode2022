@@ -51,7 +51,7 @@ def find_full_overlap(range_pair: str):
 
     # grab the front and end alues for each elf in par by deliminating by comma and dash
     # need to use strip to remove trailing spaces
-    pair = line.strip().replace("-", ",").split(",")
+    pair = range_pair.strip().replace("-", ",").split(",")
     elf1_start = int(pair[0])
     elf1_end = int(pair[1])
     elf2_start = int(pair[2])
@@ -68,7 +68,7 @@ def find_full_overlap(range_pair: str):
 
 sum_full_overlap = 0
 # read datafile line by line
-with open("/Users/fleigh/Projects/AdventofCode/DecFour/DecFour.txt") as f:
+with open("/Users/fleigh/Projects/AdventofCode/DecFour/Data.txt") as f:
     for line in f:
         if find_full_overlap(line):
             sum_full_overlap += 1
@@ -105,7 +105,7 @@ def find_partial_overlap(range_pair: str):
     # grab the front and end alues for each elf in par by deliminating by comma and dash
     # need to use strip to remove trailing spaces
     # structure of result is [x1, x2, y1, y2]
-    pair = line.strip().replace("-", ",").split(",")
+    pair = range_pair.strip().replace("-", ",").split(",")
     elf1_start = int(pair[0])
     elf1_end = int(pair[1])
     elf2_start = int(pair[2])
@@ -122,7 +122,7 @@ def find_partial_overlap(range_pair: str):
 
 sum_partial_overlap = 0
 # read datafile line by line
-with open("/Users/fleigh/Projects/AdventofCode/DecFour/DecFour.txt") as f:
+with open("/Users/fleigh/Projects/AdventofCode/DecFour/Data.txt") as f:
     for line in f:
         sum_partial_overlap += find_partial_overlap(line)
 

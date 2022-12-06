@@ -42,7 +42,7 @@ To begin, get your puzzle input.
 # if I had not tracked the elf ids it could have had better space compleity
 
 # opening the file in a way that automatically closes it
-with open("/Users/fleigh/Projects/AdventofCode/DecOne/DecOne.txt", "r") as f:
+with open("/Users/fleigh/Projects/AdventofCode/DecOne/Data.txt", "r") as f:
   # reading the data from the file
   file_data = f.read()
   # splitting the file data into a list with inclusion of empty lines
@@ -93,14 +93,13 @@ Find the top three Elves carrying the most Calories. How many Calories are those
 # still order n space complexity
 
 # opening the file in a way that automatically closes it
-with open("/Users/fleigh/Projects/AdventofCode/DecOne/DecOne.txt", "r") as f:
+with open("/Users/fleigh/Projects/AdventofCode/DecOne/Data.txt", "r") as f:
   # reading the data from the file
   file_data = f.read()
   # splitting the file data into a list with inclusion of empty lines
   cals_list_by_elf = file_data.splitlines()
 
-# we will keep track of both the cals and which elves have the cals
-
+# we will keep track of both the cals AND which elves have the cals
 
 def maxCals2(cals_list):
     # initialize elf counter and cache
