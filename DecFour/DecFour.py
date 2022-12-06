@@ -40,10 +40,8 @@ In how many assignment pairs does one range fully contain the other?
 
 def sum_ranges_full_overlap(path_to_data):
     """this function identifies the pairs with ranges that fully overlap
-
     Args:
         path_to_data (str): describes path to text file with data
-
     Returns: 
         count_overlap (int): the sum of pairs that have fully and not partial overlapping ranges
     """

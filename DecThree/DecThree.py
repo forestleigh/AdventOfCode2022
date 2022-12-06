@@ -29,26 +29,18 @@ Find the item type that appears in both compartments of each rucksack. What is t
 
 """
 
+# make a dict of priorities for lower case items (a-z -> 1-26)
+from string import ascii_letters
+priorities_map = {v: k for k, v in enumerate(ascii_letters, 1)}
+# {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6...
 
 def rucksack_reorg(path_to_data):
     """this function identifies the items that are in both compartments of a rucksack and adds their respective priorties
-
     Args:
         path_to_data (str): describes path to text file with data
-
     Returns: 
         sum_of_priorities (int): the sum of priorties for each item type that appears in both compartments of each rucksack
     """
-
-    # make a dict of priorities for lower case items (a-z -> 1-26)
-    from string import ascii_lowercase
-    priorities_map_lower = {v: k for k, v in enumerate(ascii_lowercase, 1)}
-    # {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6...
-
-    # make a dict of priorities for upper case items (A-Z -> 27-52)
-    from string import ascii_uppercase
-    priorities_map_upper = {v: k for k, v in enumerate(ascii_uppercase, 27)}
-    # {'A': 27, 'B': 28, 'C': 29, 'D': 30, 'E': 31, 'F': 32...
 
     # initiate the cumulative list of shared items and priorities total
     shared_items = []
@@ -81,14 +73,8 @@ def rucksack_reorg(path_to_data):
 
         # finnaly, calcualte the priorities
         for item in shared_items:
-            if item.islower():
-                # if its lowercase, get priotrity from that hash map
                 # add priotrity to the accumulaating total
-                priorities_of_shared_total += priorities_map_lower[item]
-            if item.isupper():
-                # if it is uppercase get the priotrty from the other hash map
-                # add prioritiy to the accumualting total
-                priorities_of_shared_total += priorities_map_upper[item]
+                priorities_of_shared_total += priorities_map[item]
 
     # return the sum of all priotiries of the items shared by compartments in single ruckshacks
     return priorities_of_shared_total
@@ -122,73 +108,36 @@ Find the item type that corresponds to the badges of each three-Elf group. What 
 """
 
 
-def rucksack_reorg(path_to_data):
+def rucksack_reorg_by_three(path_to_data):
     """this function identifies the items that are in both compartments of a rucksack and adds their respective priorties
-
     Args:
         path_to_data (str): describes path to text file with data
-
     Returns: 
         sum_of_priorities (int): the sum of priorties for each item type that appears in both compartments of each rucksack
     """
 
-    # make a dict of priorities for lower case items (a-z -> 1-26)
-    from string import ascii_lowercase
-    priorities_map_lower = {v: k for k, v in enumerate(ascii_lowercase, 1)}
-    # {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6...
-
-    # make a dict of priorities for upper case items (A-Z -> 27-52)
-    from string import ascii_uppercase
-    priorities_map_upper = {v: k for k, v in enumerate(ascii_uppercase, 27)}
-    # {'A': 27, 'B': 28, 'C': 29, 'D': 30, 'E': 31, 'F': 32...
-
-    # initiate the cumulative list of shared items and priorities total
-    shared_badges = []
-    priorities_total_for_all_badges = 0
-    current_trio_of_elves = []
+    # initilize the accumulator
+    priorities_total = 0
 
     # read datafile line by line
     with open(path_to_data, "r") as f:
-        for line in f:
-            #if current_trio is less than 3, add the line to the list
-            if len(current_trio_of_elves) < 3:
-                # remove duplicates as strings are added to trio sets 
-                # need to use strip to remove trailing spaces
-                current_trio_of_elves.append(set(line.strip()))
+        lines = f.read().splitlines()
 
-            # if curent_trio is 3, clear the list and add this line to the 0 index
-            if (len(current_trio_of_elves)) == 3:
+        #iterate over groups of 3 lines
+        for i in range(0, len(lines), 3):
+            # make each sack into a set to remove duplicates
+            elf1 = set(lines[i + 0])
+            elf2 = set(lines[i + 1])
+            elf3 = set(lines[i + 2])
 
-                # find item shared by all 3 strings of items in current trio
-                # Calculates intersection of sets at index 0 and 1
-                set_temp = current_trio_of_elves[0].intersection(current_trio_of_elves[1])
-                
-                # Calculates intersection of sets at set_temp and 3
-                result_set = set_temp.intersection(current_trio_of_elves[2])
-                
-                # Converts resulting set to list
-                curr_badge_list = list(result_set)
-                # print(curr_badge_list)
+            # find the intersection of the 3 elf's sacks
+            common_el = elf1.intersection(elf2).intersection(elf3)
+            badge_id = list(common_el)[0]
 
-                # add curent badge list to shared badge list
-                shared_badges += set(curr_badge_list)
+            # add the priortiy score to total
+            priorities_total += priorities_map[badge_id]
 
-                # return the list to empty to find the next trio befroe next itteration 
-                current_trio_of_elves = []
-
-        # finnaly, calcualte the priorities
-        for item in shared_badges:
-            if item.islower():
-                # if its lowercase, get priotrity from that hash map
-                # add priotrity to the accumulaating total
-                priorities_total_for_all_badges += priorities_map_lower[item]
-            if item.isupper():
-                # if it is uppercase get the priotrty from the other hash map
-                # add prioritiy to the accumualting total
-                priorities_total_for_all_badges += priorities_map_upper[item]
-
-    # return the sum of all priotiries of the items shared by compartments in single ruckshacks
-    return priorities_total_for_all_badges
+        return priorities_total
 
 
-print(rucksack_reorg("/Users/fleigh/Projects/AdventofCode/DecThree/DecThree.txt"))
+print(rucksack_reorg_by_three("/Users/fleigh/Projects/AdventofCode/DecThree/DecThree.txt"))
