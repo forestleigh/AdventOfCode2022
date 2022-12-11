@@ -34,7 +34,7 @@ def find_full_overlap(range_pair: str):
 
 sum_full_overlap = 0
 # read datafile line by line
-with open("/Users/fleigh/Projects/AdventofCode/DecFour/Data.txt") as f:
+with open("/Users/fleigh/Projects/AdventofCode/Dec_4/Data.txt") as f:
     for line in f:
         if find_full_overlap(line):
             sum_full_overlap += 1
@@ -78,7 +78,7 @@ def find_partial_overlap(range_pair: str):
 
 sum_partial_overlap = 0
 # read datafile line by line
-with open("/Users/fleigh/Projects/AdventofCode/DecFour/Data.txt") as f:
+with open("/Users/fleigh/Projects/AdventofCode/Dec_4/Data.txt") as f:
     for line in f:
         sum_partial_overlap += find_partial_overlap(line)
 

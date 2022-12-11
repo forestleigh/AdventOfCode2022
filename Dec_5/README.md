@@ -12,6 +12,7 @@ They do, however, have a drawing of the starting stacks of crates and the rearra
 [Z] [M] [P]
  1   2   3 
 
+
 move 1 from 2 to 1
 move 3 from 1 to 3
 move 2 from 2 to 1
@@ -24,6 +25,7 @@ Then, the rearrangement procedure is given. In each step of the procedure, a qua
 [N] [C]    
 [Z] [M] [P]
  1   2   3 
+
 In the second step, three crates are moved from stack 1 to stack 3. Crates are moved one at a time, so the first crate to be moved (D) ends up below the second and third crates:
 
         [Z]
@@ -31,6 +33,7 @@ In the second step, three crates are moved from stack 1 to stack 3. Crates are m
     [C] [D]
     [M] [P]
  1   2   3
+
 Then, both crates are moved from stack 2 to stack 1. Again, because crates are moved one at a time, crate C ends up below crate M:
 
         [Z]
@@ -38,6 +41,7 @@ Then, both crates are moved from stack 2 to stack 1. Again, because crates are m
 [M]     [D]
 [C]     [P]
  1   2   3
+
 Finally, one crate is moved from stack 1 to stack 2:
 
         [Z]
@@ -45,6 +49,7 @@ Finally, one crate is moved from stack 1 to stack 2:
         [D]
 [C] [M] [P]
  1   2   3
+
 The Elves just need to know which crate will end up on top of each stack; in this example, the top crates are C in stack 1, M in stack 2, and Z in stack 3, so you should combine these together and give the Elves the message CMZ.
 
 After the rearrangement procedure completes, what crate ends up on top of each stack?
@@ -59,12 +64,14 @@ Again considering the example above, the crates begin in the same configuration:
 [N] [C]    
 [Z] [M] [P]
  1   2   3 
+
 Moving a single crate from stack 2 to stack 1 behaves the same as before:
 
 [D]        
 [N] [C]    
 [Z] [M] [P]
  1   2   3 
+
 However, the action of moving three crates from stack 1 to stack 3 means that those three moved crates stay in the same order, resulting in this new configuration:
 
         [D]
@@ -72,6 +79,7 @@ However, the action of moving three crates from stack 1 to stack 3 means that th
     [C] [Z]
     [M] [P]
  1   2   3
+
 Next, as both crates are moved from stack 2 to stack 1, they retain their order as well:
 
         [D]
@@ -79,6 +87,7 @@ Next, as both crates are moved from stack 2 to stack 1, they retain their order 
 [C]     [Z]
 [M]     [P]
  1   2   3
+
 Finally, a single crate is still moved from stack 1 to stack 2, but now it's crate C that gets moved:
 
         [D]
@@ -86,6 +95,7 @@ Finally, a single crate is still moved from stack 1 to stack 2, but now it's cra
         [Z]
 [M] [C] [P]
  1   2   3
+ 
 In this example, the CrateMover 9001 has put the crates in a totally different order: MCD.
 
 Before the rearrangement process finishes, update your simulation so that the Elves know where they should stand to be ready to unload the final supplies. After the rearrangement procedure completes, what crate ends up on top of each stack?

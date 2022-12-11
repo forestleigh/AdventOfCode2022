@@ -31,7 +31,7 @@ def rucksack_reorg(sack: str):
     return priority
 
 # read datafile line by line
-with open("/Users/fleigh/Projects/AdventofCode/DecThree/Data.txt") as f:
+with open("/Users/fleigh/Projects/AdventofCode/Dec_3/Data.txt") as f:
     priorities_total = 0
     for line in f:
         priorities_total += rucksack_reorg(line)
@@ -69,7 +69,7 @@ def rucksack_reorg_by_three(list_of_items):
     return priorities_total
 
 # read datafile as a list
-with open("/Users/fleigh/Projects/AdventofCode/DecThree/Data.txt") as f:
+with open("/Users/fleigh/Projects/AdventofCode/Dec_3/Data.txt") as f:
     lines = f.read().splitlines()
     priorities_sum = rucksack_reorg_by_three(lines)
 

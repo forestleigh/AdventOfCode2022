@@ -1087,11 +1087,3 @@ $ cd ..
 $ cd zlv
 $ ls
 127388 nscv.wvb
-$ cd ..
-$ cd ..
-$ cd ..
-$ cd ..
-$ cd ..
-$ cd ..
-$ cd ..
-$ cd ..

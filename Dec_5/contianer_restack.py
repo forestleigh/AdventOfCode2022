@@ -75,7 +75,7 @@ def arrange_supply_stacks(instructions: str, stacks: dict, mode: str):
 # initilize the stack dictionary
 stacks_made = {}
 # read datafile line by line
-with open("/Users/fleigh/Projects/AdventofCode/DecFifth/Map.txt") as f:
+with open("/Users/fleigh/Projects/AdventofCode/Dec_5/Map.txt") as f:
     for line in f:
         stack_dict = parse_stack_layer(line, stacks_made)
 
@@ -113,7 +113,7 @@ with open("/Users/fleigh/Projects/AdventofCode/DecFifth/Map.txt") as f:
 state_of_containers = OrderedDict(sorted(stack_dict.items()))
 
 # read datafile line by line
-with open("/Users/fleigh/Projects/AdventofCode/DecFifth/Instructions.txt") as f:
+with open("/Users/fleigh/Projects/AdventofCode/Dec_5/Instructions.txt") as f:
     for line in f:
         arrange_supply_stacks(line, state_of_containers, "9001")
 

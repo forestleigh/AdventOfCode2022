@@ -36,7 +36,7 @@ def nonrepeating_substring(datastream: str, mode: int):
             # shift the right window forward
             window_right += 1
 
-with open("/Users/fleigh/Projects/AdventofCode/DecSixth/Data.txt") as f:
+with open("/Users/fleigh/Projects/AdventofCode/Dec_6/Data.txt") as f:
     data = f.read()
 print(nonrepeating_substring(data, 4))
 

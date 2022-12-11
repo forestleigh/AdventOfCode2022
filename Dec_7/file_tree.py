@@ -3,193 +3,114 @@
 Find all of the directories with a total size of at most 100000. What is the sum of the total sizes of those directories?
 
 """
-from typing import Dict, List, Tuple
+from typing import Dict, Union, Optional
+import attr
+import os
 
-# #initilize our cache and dir trackers
-# filesystem_dict: Dict[str, int] ={}
-# curr_dir: str = ''
+# initilize class defintiion for tree 
+@attr.s(auto_attribs=True)
+class dir:
+    parent: Optional[dir]
+    children: Dict[str, Union[dir, int]]
+    name: str
 
-# # use stack to track history
-# history=[]
+# interpret commands of filesystem and call build tree function when relevant 
+def parse_filesystem (array_of_files, root):
+    line_count: int = 0
+    current_dir: dir = root
 
-# # use dict to track recurring ls calls in the same directory (avoid doublecounts)
-# ls_called: Dict[str, int] = {}
+    while line_count < len(array_of_files):
+        # print('line count: ', line_count)
 
-# def parse_files_to_dict (terminal_output: str):
-#     global curr_dir, history, ls_called
+        # jumpt to root of tree
+        if array_of_files[line_count] == '$ cd /':
+            current_dir = root
+            line_count += 1
 
-#     # if moving up through file system
-#     if terminal_output[0:6] == '$ cd .' and len(history) > 1:
-#         print("terminal_output[0:6]: ", terminal_output[0:6], "history before pop: ", history)
+        # jump to parent directory in tree
+        elif array_of_files[line_count] == '$ cd ..':
+            current_dir = current_dir.parent
+            line_count += 1
 
-#         # reassign curr dir from history
-#         history.pop()
-#         curr_dir_info = history.pop()
-#         curr_dir = curr_dir_info[0]
-#         print("curr_dir_info after cd .. (pop): ", curr_dir_info, "curr_dir_info[0]: ", curr_dir_info[0],  "curr_dir_info[1]: ", curr_dir_info[1], )
-        
-#         # add the previous dir's size to the parent's size
-#         print("filesystem BEFORE previous dir's filesizes added: ", filesystem_dict[curr_dir])
-#         filesystem_dict[curr_dir] += curr_dir_info[1]
-#         print("filesystem AFTER previous dir's filesizes added: ", filesystem_dict[curr_dir])
-#         return "Done"
+        # jump to child directory in tree
+        elif array_of_files[line_count].startswith('$ cd'):
+            split_line: list = array_of_files[line_count].split()
+            assert len(split_line) == 3
+            current_dir_name: str = split_line[2]
+            current_dir = current_dir.children[current_dir_name]
+            line_count += 1
 
-#     # if moving down through file system
-#     if terminal_output[0:3] == '$ c' and terminal_output[6] != '.':
-#         print("terminal_output[0:3]: ", terminal_output[0:3])
+        # expand the tree with new children
+        elif array_of_files[line_count] == '$ ls':
+            line_count = parse_ls(array_of_files, line_count + 1, current_dir)
 
-#         # reassign curent directory using slice on input
-#         curr_dir = terminal_output[5:].strip()
-#         history.append([curr_dir, 0])
-#         ls_called[curr_dir] = ls_called.get(curr_dir, 0)
-#         filesystem_dict[curr_dir] = filesystem_dict.get(curr_dir, 0)
-#         print("curr_dir from string slice", curr_dir, "dir_history with curr adeded: ", history)
+        else: 
+            raise RuntimeError(f"invalid line | {array_of_files[line_count]}")
 
-#     # if list command is called
-#     if terminal_output[0:3] == '$ l':
-#         ls_called[curr_dir] += 1
-#         print("ls_called: ", ls_called)
+    return root
 
-#     # # confirm that the list command hasn't yet been called in this directory (avoid doublecounts)
-#     if ls_called[curr_dir] <= 1 and len(history) > 1:
-#         print("ls_called <= 1: ", "yes")
+# function that builds tree (assumes ls is always caleld before a directory is visitied)
+def parse_ls (array_of_files, line_count, current_dir):
 
-#         #now add the file sizes
-#         if terminal_output[0].isnumeric():
-#             # pull digits from string and convert them into integer
-#             size_array_of_digits = [i for i in terminal_output.split() if i.isdigit()]
-#             size_str = ''.join(map(str, size_array_of_digits))
-#             size_int = int(size_str)
+    while line_count < len(array_of_files)  and not array_of_files[line_count].startswith('$'):
+        split_line: list = array_of_files[line_count].split()
+        assert len(split_line) == 2
 
-#             # add the filesize to the histroy and dict under the current directory
-#             history[-1][1] += size_int
-#             filesystem_dict[curr_dir] = filesystem_dict.get(curr_dir, 0) + size_int
-#             print("file size added to filesystem dic under current directory: ", history)
+        if array_of_files[line_count].startswith('dir'):
+            new_dir_name: str = split_line[1]
+            current_dir.children[new_dir_name] = dir(parent=current_dir, children={}, name = new_dir_name)
+            line_count += 1
 
-# print(filesystem_dict)
+        if array_of_files[line_count][0].isnumeric():
+            split_line: list = array_of_files[line_count].split()
+            assert len(split_line) == 2
+            new_file_size: int = split_line[0]
+            new_file_name: str = split_line[1]
+            current_dir.children[new_file_name] = int(new_file_size)
+            line_count += 1
 
-# def sum_deletion_cadidate_sizes (filesystem: Dict[str, int], target_size: int ) -> int:
-#     # extract filesizes from dict
-#     directory_sizes = filesystem.values()
-#     print("directory_sizes: ", directory_sizes)
+    # returns line count of next '$'
+    return line_count
 
-#     # make list of file sizes that match target
-#     deletion_candidates = list(filter(lambda v: v <= target_size, directory_sizes))
-#     print("deletion candidates: ", deletion_candidates)
+# function that confirms tree was properly built
+prints = []
+def print_tree(curr, base_path):
+    for name, child in curr.children.items():
+        full_path = os.path.join(base_path, name)
+        if isinstance(child, int):
+            new_str = f"path: {full_path}, size: {child}"
+            prints.append(new_str)
+        else:
+            print_tree(child, base_path = full_path)
 
-#     # reduce array to sum of values and return total
-#     total = sum(deletion_candidates)
-#     return total
+# combine file sizes that are below size limit
+total_under_limit: int = 0
+size_limit: int = 100000
+def traverse_filesystem(current):
+    global total_under_limit, size_limit
+    curr_size: int = 0
+    for _, item in current.children.items():
+        if isinstance(item, int):
+            curr_size += item
+        else:
+            curr_size += traverse_filesystem(item)
+    if curr_size <= size_limit:
+        total_under_limit += curr_size
+    return curr_size
 
-# # read datafile line by line
-# with open("/Users/fleigh/Projects/AdventofCode/Dec_7/Data.txt") as f:
-#     for line in f:
-#         print(line)
-#         parse_files_to_dict(line)
 
-#     # after parsing entire file, find the sum of the rightly sized directories
-#     max_size = 100000
-#     memory_to_clean = sum_deletion_cadidate_sizes(filesystem_dict, max_size)
-#     print(memory_to_clean) # too low: 1149206/ 1283925
+root: dir = dir(parent=None, children={}, name = '/')
+with open("/Users/fleigh/Projects/AdventofCode/Dec_7/Data.txt") as f:
+    puzzle = f.read().splitlines()
 
-# --------------------------------------------------------------------------------------------
+# call function to build tree
+fs = parse_filesystem(puzzle, root)
 
-# # initialize our cache and dir trackers
-# filesystem_dict: Dict[str, int] ={}
-# curr_dir: str = ''
-# previous_command: str = ''
-# curr_dir_sum: int = 0
+# print tree to check
+print_tree(root, "/")
+for p in prints: print(p)
 
-# # use stack to track history
-# sum_history: List[int] = [] # consider replacing with history: List[Tuple[str, int]]=[]
-# dir_history: List[str] = []
+# call function to traverse tree and cacluate sizes
+print('size of the root: ', traverse_filesystem(fs))
+print('sum of files under 100000 in size: ', total_under_limit)
 
-# # use dict to track recurring ls calls in the same directory (avoid doublecounts)
-# ls_called: Dict[str, int] = {}
-
-# def parse_files_to_dict (terminal_output: str):
-#     global curr_dir, curr_dir_sum, sum_history, dir_history, ls_called, previous_command
-
-#     # if moving up through file system
-#     if terminal_output[0:6] == '$ cd .' and len(dir_history) > 1:
-#         print("terminal_output[0:6]: ", terminal_output[0:6], "dir_histroy: ", dir_history)
-
-#         # reset the sum counter for a new dir
-#         sum_history.append(curr_dir_sum)
-#         curr_dir_sum = 0
-#         print("sum_history: ", sum_history, "curr_dir_sum back to zero: ", curr_dir_sum)
-
-#         # reassign curr dir from history
-#         dir_history.pop()
-#         curr_dir = dir_history.pop()
-#         print("curr_dir from history pop: ", curr_dir, "dir_histroy with curr removed: ", dir_history)
-        
-#         # add the previous dir's size to the parent's size
-#         print("filesystem before previous dir's filesizes added (a): ", filesystem_dict)
-#         filesystem_dict[curr_dir] += sum_history.pop()
-#         print("filesystem with previous dir's filesizes added: ", filesystem_dict[curr_dir])
-#         return "Done"
-
-#     # if moving down through file system
-#     if terminal_output[0:3] == '$ c' and terminal_output[6] != '.':
-#         print("terminal_output[0:3]: ", terminal_output[0:3])
-
-#         # reset the sum counter for a new dir
-#         sum_history.append(curr_dir_sum)
-#         curr_dir_sum = 0
-#         print("sum_history", sum_history, "curr_dir_sum back to zero: ", curr_dir_sum)
-
-#         # reassign curent directory using slice on input
-#         curr_dir = terminal_output[5:].strip()
-#         dir_history.append(curr_dir)
-#         ls_called[curr_dir] = ls_called.get(curr_dir, 0)
-#         filesystem_dict[curr_dir] = filesystem_dict.get(curr_dir, 0)
-#         print("curr_dir from string slice", curr_dir, "dir_history with curr adeded: ", dir_history)
-
-#     # if list command is called
-#     if terminal_output[0:3] == '$ l':
-#         ls_called[curr_dir] += 1
-#         print("ls_called: ", ls_called)
-
-#     # # confirm that the list command hasn't yet been called in this directory (avoid doublecounts)
-#     if ls_called[curr_dir] <= 1:
-#         print("ls_called <= 1: ", "yes")
-
-#         #now add the file sizes
-#         if terminal_output[0].isnumeric():
-#             # pull digits from string and convert them into integer
-#             size_array_of_digits = [i for i in terminal_output.split() if i.isdigit()]
-#             size_str = ''.join(map(str, size_array_of_digits))
-#             size_int = int(size_str)
-#             curr_dir_sum += size_int #to be added to histroy stack elsewhere
-#             print("file size added to current dir sum: ", curr_dir_sum)
-
-#             # add the filesize to the dict under the current directory
-#             filesystem_dict[curr_dir] = filesystem_dict.get(curr_dir, 0) + size_int
-#             print("file size added to filesystem dic under current directory: ", curr_dir_sum)
-
-# print(filesystem_dict)
-
-# def sum_deletion_cadidate_sizes (filesystem: Dict[str, int], target_size: int ) -> int:
-#     # extract filesizes from dict
-#     directory_sizes = filesystem.values()
-#     print("directory_sizes: ", directory_sizes)
-
-#     # make list of file sizes that match target
-#     deletion_candidates = list(filter(lambda v: v <= target_size, directory_sizes))
-#     print("deletion candidates: ", deletion_candidates)
-
-#     # reduce array to sum of values and return total
-#     total = sum(deletion_candidates)
-#     return total
-
-# # read datafile line by line
-# with open("/Users/fleigh/Projects/AdventofCode/Dec_7/Data.txt") as f:
-#     for line in f:
-#         print(line)
-#         parse_files_to_dict(line)
-
-#     # after parsing entire file, find the sum of the rightly sized directories
-#     max_size = 100000
-#     memory_to_clean = sum_deletion_cadidate_sizes(filesystem_dict, max_size)
-#     print(memory_to_clean)
