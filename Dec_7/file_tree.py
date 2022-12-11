@@ -83,7 +83,7 @@ def print_tree(curr, base_path):
         else:
             print_tree(child, base_path = full_path)
 
-# combine file sizes that are below size limit
+# combine directory sizes that are below size limit
 total_under_limit: int = 0
 size_limit: int = 100000
 def traverse_filesystem(current):
@@ -111,6 +111,38 @@ print_tree(root, "/")
 for p in prints: print(p)
 
 # call function to traverse tree and cacluate sizes
-print('size of the root: ', traverse_filesystem(fs))
+current_mem_used = traverse_filesystem(fs)
+print('size of the root: ', current_mem_used)
 print('sum of files under 100000 in size: ', total_under_limit)
 
+"""
+
+--- Part Two ---
+Find the smallest directory that, if deleted, would free up enough space on the filesystem to run the update. What is the total size of that directory?
+
+
+"""
+# find dir size to delete 
+max_disk_space:int = 70000000
+memory_needed:int = 30000000
+max_current_mem_to_keep:int = max_disk_space - memory_needed
+dir_size_to_delete:int = current_mem_used -max_current_mem_to_keep
+
+# combine directory sizes that are above size limit
+large_dirs: list = []
+def size_dirs(current):
+    global dir_size_to_delete
+    curr_size: int = 0
+    for _, item in current.children.items():
+        if isinstance(item, int):
+            curr_size += item
+        else:
+            curr_size += size_dirs(item)
+    if curr_size >= dir_size_to_delete:
+            large_dirs.append(curr_size)
+        
+    return curr_size
+
+# call function to traverse tree and cacluate sizes
+size_dirs(fs)
+print('smallest file to delete: ', sorted(large_dirs)[0])
