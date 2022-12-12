@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Set
 import string
 from collections import namedtuple
 
@@ -23,17 +23,18 @@ for i,el in enumerate(data):
         end_point = Point(x=el.index('E'), y=i)
 print(puzzle, 'start: ', start_point, 'end: ', end_point)
 
-visited: List = [] # List for visited nodes
+visited: Set = set() # List for visited nodes
 queue: List = [] # Initialize a queue
 
 #function for Bredth First Search
 def bfs(visited, matrix, start):
-  visited.append(start)
+  visited.add(start)
   queue.append(start)
+  step_count = 0
 
   while queue:
     point = queue.pop(0)
-    current_location = matrix[point[0]][point[1]]
+    current_location = matrix[point.y][point.x]
     # print ('current location: ', current_location)
 
     # define four points
@@ -45,16 +46,20 @@ def bfs(visited, matrix, start):
 
     for neighbor in neighbors:
         try:
-            if matrix[neighbor.x][neighbor.y] <= current_location + 1 \
+            # if the step is one or less up from the current step (rule)
+            if matrix[neighbor.y][neighbor.x] <= current_location + 1 \
+                and not neighbor.y < 0 and not neighbor.x < 0 \
                 and neighbor not in visited:
-                    visited.append(neighbor)
+                    visited.add(neighbor)
                     queue.append(neighbor)
         except IndexError:
             pass
+    step_count += 1
+
+  return step_count
 
 # function calling
-bfs(visited, puzzle, start_point)
- 
+print(bfs(visited, puzzle, start_point))
 print('visitied: ', len(visited))
-
+# print('step count: ', step_count)
 
