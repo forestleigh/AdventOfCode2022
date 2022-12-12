@@ -23,43 +23,58 @@ for i,el in enumerate(data):
         end_point = Point(x=el.index('E'), y=i)
 print(puzzle, 'start: ', start_point, 'end: ', end_point)
 
-visited: Set = set() # List for visited nodes
-queue: List = [] # Initialize a queue
-
 #function for Bredth First Search
-def bfs(visited, matrix, start):
-  visited.add(start)
-  queue.append(start)
-  step_count = 0
+def bfs(matrix, start, end):
+    queue: List = [] # Initialize a queue
+    queue.append(start)  # push the first path into the queue
 
-  while queue:
-    point = queue.pop(0)
-    current_location = matrix[point.y][point.x]
-    # print ('current location: ', current_location)
+    visited: Set = set() # List for visited nodes
+    how_many_steps = 0
 
-    # define four points
-    top = Point(point[0], point[1] + 1)
-    bottom = Point(point[0], point[1] - 1)
-    left = Point(point[0] - 1, point[1])
-    right = Point(point[0] + 1, point[1])
-    neighbors = [top, bottom, left, right]
+    while queue:
 
-    for neighbor in neighbors:
-        try:
-            # if the step is one or less up from the current step (rule)
-            if matrix[neighbor.y][neighbor.x] <= current_location + 1 \
-                and not neighbor.y < 0 and not neighbor.x < 0 \
-                and neighbor not in visited:
-                    visited.add(neighbor)
-                    queue.append(neighbor)
-        except IndexError:
-            pass
-    step_count += 1
+        new_queue = [] # initilize queue replacement
+        for current in queue:
 
-  return step_count
+            # initialize current value
+            current_elevation = matrix[current.y][current.x]
+            
+            # if we've made it to the ned return the steps
+            if current == end:
+                return how_many_steps
+
+            # collect new neighbors in new queue
+            elif current not in visited:
+                top = Point(current[0], current[1] + 1)
+                bottom = Point(current[0], current[1] - 1)
+                left = Point(current[0] - 1, current[1])
+                right = Point(current[0] + 1, current[1])
+                neighbors = [top, bottom, left, right]
+
+                # ensure each neighbor is in bounds
+                for neighbor in neighbors:
+                    if neighbor.x >= 0 and neighbor.y >= 0:
+                        try:
+                            # initlize inbound new neighbor values
+                            neighbor_value = matrix[neighbor.y][neighbor.x]
+                        except IndexError:
+                            continue
+                        # if the step is one or less up from the current step (rule)
+                        if neighbor_value <= current_elevation + 1:
+                            # add neighbor to new queue
+                            new_queue.append(neighbor)
+
+                # prevent revisiting old neighbors
+                visited.add(current)
+        
+        # increment queue and step count
+        queue=new_queue
+        how_many_steps += 1
+
+        # address edgecase of end not being found
+        if not queue: raise RuntimeError("BFS complete but never found the endpoint - no solution")
+
 
 # function calling
-print(bfs(visited, puzzle, start_point))
-print('visitied: ', len(visited))
-# print('step count: ', step_count)
+print(bfs(puzzle, start_point, end_point))
 
