@@ -1,3 +1,8 @@
+""" 
+--- Day 8: Treetop Tree House ---
+How many trees are visible from outside the grove? 
+"""
+
 from typing import List
 
 with open("/Users/fleigh/Projects/AdventofCode/Dec_8/Data.txt") as f:
@@ -46,34 +51,43 @@ def is_visited(row:int, col:int):  # helper function to confirm if a coordinate 
     return True
 
 
-def is_visible(current: int, neighbors: List, matrix): # helper function to confirm if tree is visible from outside grove
-    directions = [True, True, True, True]
+def is_visible(current: List, neighbors: List, matrix, directions=[True, True, True, True], at_boundary=[False, False, False, False]): # helper function to confirm if tree is visible from outside grove
+     # default is the tree is visible
+     # default is the neighbor is not on the boundary
+
+    curr_height = matrix[current[0]][current[1]]
 
     # check current visiblity of tree
     for i, el in enumerate(neighbors):
 
-        # if it is out of range, skip it
+        # if it is out of range its at the boundary
         if (is_valid(el[0], el[1]) == False):
-            return True
+            at_boundary[i] = True
+            continue
 
         neighbor_height = matrix[el[0]][el[1]]
 
-        if neighbor_height >= current:
+        if neighbor_height >= curr_height:
             directions[i] = False
 
     # base case: if all directions have a tree that blocks view, the tree is not visible
     if all(item is False for item in directions):
         return False
 
+    # base case: if all directions have found the boundary, the tree is visible
+    if all(item is True for item in at_boundary):
+        return True
+
     # else increment neighbors
-    next_neighbors: List = []
-    for i, el in enumerate(neighbors):
-        neighbor_row: int = el[0] + nRow[i]
-        neighbor_col: int = el[1] + nCol[i]
-        neighbors.append([neighbor_row, neighbor_col])
+    # neighbors = [[3,2], [4,3], [3, 4], [2, 3]]
+    next_neighbors = neighbors
+    next_neighbors[0][1] -= 1 # send north more north
+    next_neighbors[1][0] += 1 # send east more east
+    next_neighbors[2][1] += 1 # send south more south
+    next_neighbors[3][0] -= 1 # send west more west
 
     # and recursively call this function until a coordinate is invalid
-    is_visible(current, next_neighbors, matrix)
+    is_visible(current, next_neighbors, matrix, directions, at_boundary)
 
 
 
@@ -89,7 +103,6 @@ def DFS_traversal(row: int, col: int, matrix):  # DFS traversal function to visi
         curr: List = stack.pop()
         row: int = curr[0]
         col: int = curr[1]
-        curr_height = matrix[curr[0]][curr[1]]
 
         # check if current is valid or not
         if (is_valid(row, col) == False):
@@ -111,7 +124,7 @@ def DFS_traversal(row: int, col: int, matrix):  # DFS traversal function to visi
             neighbors.append([neighbor_row, neighbor_col])
 
         # check if tree is visible
-        if (is_visible(curr_height, neighbors, matrix) == True):
+        if (is_visible(curr, neighbors, matrix) == True):
             visible_tree_count += 1
 
         # add current to visited
