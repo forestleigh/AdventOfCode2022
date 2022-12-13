@@ -51,9 +51,9 @@ def is_visited(row:int, col:int):  # helper function to confirm if a coordinate 
     return True
 
 
-def is_visible(current: List, neighbors: List, matrix, directions=[True, True, True, True], at_boundary=[False, False, False, False]): # helper function to confirm if tree is visible from outside grove
-     # default is the tree is visible
-     # default is the neighbor is not on the boundary
+def is_visible(current: List, neighbors: List, matrix, directions, at_boundary): # helper function to confirm if tree is visible from outside grove
+     # default is the tree is visible (directions=[True, True, True, True])
+     # default is the neighbor is not on the boundary (at_boundary=[False, False, False, False)
 
     curr_height = matrix[current[0]][current[1]]
 
@@ -67,6 +67,7 @@ def is_visible(current: List, neighbors: List, matrix, directions=[True, True, T
 
         neighbor_height = matrix[el[0]][el[1]]
 
+        # if the neighbor is taller then it blocks the current tree from that direction
         if neighbor_height >= curr_height:
             directions[i] = False
 
@@ -74,12 +75,12 @@ def is_visible(current: List, neighbors: List, matrix, directions=[True, True, T
     if all(item is False for item in directions):
         return False
 
-    # base case: if all directions have found the boundary, the tree is visible
+    # base case: if all directions have found the boundary and function is still going, the tree is visible
     if all(item is True for item in at_boundary):
         return True
 
     # else increment neighbors
-    # neighbors = [[3,2], [4,3], [3, 4], [2, 3]]
+    # neighbors example [[3,2], [4,3], [3, 4], [2, 3]]
     next_neighbors = neighbors
     next_neighbors[0][1] -= 1 # send north more north
     next_neighbors[1][0] += 1 # send east more east
@@ -94,6 +95,7 @@ def is_visible(current: List, neighbors: List, matrix, directions=[True, True, T
 def DFS_traversal(row: int, col: int, matrix):  # DFS traversal function to visit every tree once
     global nRow, nCol, visited
     visible_tree_count = 0
+    tree_visited_count = 0
 
     # initialize a stack of pairs
     stack: List = []
@@ -124,13 +126,16 @@ def DFS_traversal(row: int, col: int, matrix):  # DFS traversal function to visi
             neighbors.append([neighbor_row, neighbor_col])
 
         # check if tree is visible
-        if (is_visible(curr, neighbors, matrix) == True):
+        directions = [True, True, True, True]
+        at_boundary = [False, False, False, False]
+        if (is_visible(curr, neighbors, matrix ,directions, at_boundary) == True):
             visible_tree_count += 1
 
         # add current to visited
         visited[row][col] = True
+        tree_visited_count += 1
 
-    return visible_tree_count
+    return 'visible trees:', visible_tree_count,'trees visited: ', tree_visited_count
 
 # function call
 print(DFS_traversal(0, 0, puzzle))
